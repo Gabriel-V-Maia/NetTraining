@@ -1,4 +1,8 @@
-class Trainer:
+import numpy
+import pytorch 
+import matplotlib as plt
+
+class RegressionTrainer:
     """
     Trainer class for PyTorch models with phased/shard-based training.
 
