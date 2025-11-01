@@ -1,6 +1,13 @@
-import numpy
-import pytorch 
-import matplotlib as plt
+import numpy as np
+import math
+from typing import List 
+import torch 
+import torch.nn as nn 
+import torch.optim as optim 
+import matplotlib.pyplot as plt
+from utils import Logger
+
+logger = Logger("[Regressional Trainer]")
 
 class RegressionTrainer:
     """
@@ -33,7 +40,13 @@ class RegressionTrainer:
             List[torch.Tensor]: List of shards.
         """
         data = data.to(self.device)
+ 
         size = int(math.sqrt(len(data)))
+        size_mb = data.numel() * data.element_size() / (1024 ** 2)
+        if size_mb < 200:
+            logger.warn("Your dataset is way too small, sharding may be inefficent (>200mb)")
+
+
         num_shards = self._nearest_prime(size)
         shard_size = len(data) // num_shards
         shards = [data[i*shard_size : (i+1)*shard_size] for i in range(num_shards - 1)]
